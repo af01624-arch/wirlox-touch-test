@@ -1,6 +1,6 @@
 # WIRLOX Touch Test 4.3 (separate Worker)
 
-This package is **not** a replacement for the live WIRLOX repo.
+This package is **not** a replacement for the live WIRLOX repo. Edit
 
 Create a separate GitHub repository, e.g. `wirlox-touch`, and upload `wrangler.json` and the entire `public/` folder to that repository. The main `af01624-arch/wirlox` repository MUST stay untouched.
 
