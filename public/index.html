@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>WIRLOX · Touch Test 4.4 · Puzzle Bank 01</title>
+<title>WIRLOX · Touch Test 4.5 · Puzzle Bank 01</title>
 <style>
   :root{color-scheme:dark;--blue:#8bd4ff;--warm:#ffe69a;--muted:#99a8c4;--panel:rgba(8,15,34,.72)}
   *{box-sizing:border-box}
@@ -124,13 +124,88 @@
   .touchHint{display:none}
   @media(pointer:coarse){.touchHint{display:block}}
 
+
+  /* Touch Test 4.5: phone interface stays off the wheel. The original desktop UI is unchanged. */
+  #mobileMenuButton, #mobileOverlay {display:none}
+  #mobileOverlay[hidden] {display:none!important}
+  @media(max-width:700px){
+    .stagebar{
+      position:fixed;z-index:9;
+      top:calc(env(safe-area-inset-top, 0px) + 10px);
+      left:10px;width:calc(100% - 104px);max-width:none;
+      transform:none;display:flex;flex-wrap:nowrap;gap:4px;
+      justify-content:stretch;pointer-events:none;
+    }
+    .stagebar .wordpill{
+      flex:1 1 0;min-width:0;white-space:nowrap;
+      padding:9px 1px;font-size:clamp(9px, 2.7vw, 11px);letter-spacing:.02em;
+    }
+    #mobileMenuButton{
+      display:block;position:fixed;z-index:10;
+      top:calc(env(safe-area-inset-top, 0px) + 10px);right:10px;
+      min-width:77px;min-height:36px;padding:6px 10px;
+      background:rgba(19,34,62,.95);border-color:rgba(165,198,240,.42);
+      font-size:12px;font-weight:bold;
+    }
+    #mobileOverlay{
+      position:fixed;inset:0;z-index:15;
+      display:flex;align-items:flex-end;justify-content:center;
+      background:rgba(3,9,22,.42);padding:0;
+    }
+    .mobileMenuCard{
+      width:100%;max-height:min(460px, 76dvh);
+      padding:12px 13px calc(env(safe-area-inset-bottom, 0px) + 12px);
+      overflow-y:auto;overscroll-behavior:contain;
+      border:1px solid rgba(164,203,250,.35);border-bottom:0;
+      border-radius:18px 18px 0 0;
+      background:linear-gradient(150deg,rgba(24,36,66,.985),rgba(9,17,33,.985));
+      box-shadow:0 -15px 60px #0009;
+    }
+    .mobileMenuHeader{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 8px}
+    .mobileMenuHeader strong{font-size:14px;letter-spacing:.05em}
+    #mobileMenuClose{font-size:12px;padding:7px 14px;min-height:34px}
+    #mobileMenuSlot{display:flex;flex-direction:column;gap:9px}
+    #mobileMenuSlot .head{
+      position:static;inset:auto;display:flex;flex-direction:row;
+      align-items:stretch;justify-content:stretch;gap:6px;
+      transform:none;pointer-events:auto;
+    }
+    #mobileMenuSlot .head .panel{flex:1;min-width:0;padding:7px 9px}
+    #mobileMenuSlot .head h1{font-size:12px;margin-bottom:3px}
+    #mobileMenuSlot .head .version{display:inline;font-size:9px}
+    #mobileMenuSlot .head .sub{display:none}
+    #mobileMenuSlot .head .dayMood{font-size:9px;line-height:1.2;margin:3px 0}
+    #mobileMenuSlot .head .statLine{font-size:10px;line-height:1.45;margin-top:3px}
+    #mobileMenuSlot .head .targetBox{min-width:105px;flex:0 1 38%}
+    #mobileMenuSlot #target{font-size:22px}
+    #mobileMenuSlot #timer{font-size:11px}
+    #mobileMenuSlot .tools{
+      display:grid;position:static;inset:auto;transform:none;
+      grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;
+      width:100%;align-items:stretch;justify-content:stretch;
+    }
+    #mobileMenuSlot .tools select{
+      grid-column:1 / -1;width:100%;max-width:none;
+      font-size:12px;padding:8px 9px;min-height:35px;
+    }
+    #mobileMenuSlot .tools button{font-size:12px;min-height:36px;padding:7px 4px}
+    #mobileMenuSlot #rearToggle{font-size:11px;padding:6px 4px}
+    #mobileMenuSlot .controls{
+      display:grid;position:static;inset:auto;transform:none;
+      align-self:center;grid-template-columns:repeat(3,60px);
+      grid-template-rows:repeat(2,44px);gap:4px;
+    }
+    #mobileMenuSlot .controls button{font-size:21px;padding:4px}
+    .help{display:none}
+    #toast{top:calc(50% + 105px)}
+  }
 </style>
 </head>
 <body>
 <canvas id="wheel"></canvas>
 <div class="head">
  <div class="panel">
-  <h1>WIRLOX <span class="version">· TOUCH TEST 4.4 · BANK 01</span></h1>
+  <h1>WIRLOX <span class="version">· TOUCH TEST 4.5 · BANK 01</span></h1>
   <div class="sub">← → position · ↑ ↓ change letter · opposite pair moves with it</div>
   <div class="dayMood" id="dayMood">PUZZLE 01 / 07 · WARM-UP · 14 LETTERS</div>
   <div class="statLine">Time: <strong id="timer">0:00</strong> <span class="sep">|</span> Moves: <strong id="moves">0</strong> <span class="sep">|</span> PB: <strong id="pb">—</strong> <span class="sep">|</span> Word: <strong id="wordCount">1 / 3</strong><span id="minimumHeader" hidden> <span class="sep">|</span> Perfect: <strong id="minimumHeaderScore">—</strong></span></div>
@@ -140,6 +215,13 @@
  </div>
 </div>
 <div class="stagebar" id="stagebar"></div>
+<button id="mobileMenuButton" type="button" aria-controls="mobileOverlay" aria-expanded="false">☰ Menu</button>
+<div id="mobileOverlay" role="dialog" aria-modal="true" aria-label="WIRLOX controls" hidden>
+  <div class="mobileMenuCard">
+    <div class="mobileMenuHeader"><strong>WIRLOX · CONTROLS</strong><button id="mobileMenuClose" type="button">Close ✕</button></div>
+    <div id="mobileMenuSlot"></div>
+  </div>
+</div>
 <div class="help"><span class="legendHorizontal">●</span> Horizontal alphabet &nbsp; <span class="legendVertical">●</span> Vertical alphabet<br>14 letters · three familiar words.<br>← → position &nbsp; ↑ ↓ alter linked letters.<br>Every arrow press costs one move. Stopwatch is secondary.</div>
 <div class="tools">
  <select id="puzzle" aria-label="Choose puzzle from bank"></select>
@@ -335,7 +417,7 @@ function vertical(delta){
  const opposite=(cursor+n()/2)%n();wheel[opposite]=mod(wheel[opposite]+delta,26);
  moves++;breakdown[level]++;updateUI();check();
 }
-// Touch Test 4.4: strict direct-wheel interaction.
+// Touch Test 4.5: strict direct-wheel interaction.
 // One deliberately paced finger gesture can make AT MOST one move.
 // Blue-wheel and orange-wheel touch zones are exclusive at pointerdown.
 // The click sample is embedded as mono 16-bit PCM (44.1 kHz). Safari can
@@ -473,7 +555,7 @@ window.addEventListener('keydown',e=>{
  const dirs={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down'};
  if(dirs[e.key]){e.preventDefault();move(dirs[e.key]);}
 });
-for(const btn of document.querySelectorAll('[data-dir]'))btn.addEventListener('click',()=>move(btn.dataset.dir));
+for(const btn of document.querySelectorAll('[data-dir]')){btn.addEventListener('pointerdown',unlockClick);btn.addEventListener('click',()=>move(btn.dataset.dir));}
 $('reset').addEventListener('click',reset);$('playAgain').addEventListener('click',reset);
 $('testWheelClick').addEventListener('click',()=>playWheelClick($('clickTestStatus')));
  $('startRun').addEventListener('click',()=>{unlockClick();if(gameRunning)return;gameRunning=true;activeSince=performance.now();$('readyOverlay').hidden=true;});
@@ -483,6 +565,42 @@ $('saveFeel').addEventListener('click',saveReview);
 $('copyFeedback').addEventListener('click',()=>{saveReview();copyAllNotes();});
 $('next').addEventListener('click',()=>{puzzleIndex=(puzzleIndex+1)%PUZZLES.length;$('puzzle').value=String(puzzleIndex);reset();});
 $('puzzle').addEventListener('change',e=>{puzzleIndex=Number(e.target.value);reset();});
+
+ // Touch Test 4.5: Move the EXISTING UI into an optional phone menu.
+ // No duplicate buttons, IDs or stats; existing listeners and scoring remain intact.
+ const mobileMenuQuery=window.matchMedia('(max-width:700px)');
+ const mobileMenu=$('mobileOverlay'),mobileMenuBtn=$('mobileMenuButton');
+ const mobileMenuSlot=$('mobileMenuSlot');
+ const gameHead=document.querySelector('.head'),gameTools=document.querySelector('.tools');
+ const gameControls=document.querySelector('.controls');
+ function closeMobileMenu(){
+   mobileMenu.hidden=true;
+   mobileMenuBtn.setAttribute('aria-expanded','false');
+ }
+ function setMobileLayout(){
+   closeMobileMenu();
+   if(mobileMenuQuery.matches){
+     mobileMenuSlot.append(gameHead,gameTools,gameControls);
+   }else{
+     document.body.insertBefore(gameHead,$('stagebar'));
+     document.body.insertBefore(gameControls,$('toast'));
+     document.body.insertBefore(gameTools,gameControls);
+   }
+ }
+ mobileMenuBtn.addEventListener('click',()=>{
+   mobileMenu.hidden=false;
+   mobileMenuBtn.setAttribute('aria-expanded','true');
+ });
+ $('mobileMenuClose').addEventListener('click',closeMobileMenu);
+ mobileMenu.addEventListener('click',event=>{if(event.target===mobileMenu)closeMobileMenu();});
+ window.addEventListener('keydown',event=>{if(event.key==='Escape'&&!mobileMenu.hidden)closeMobileMenu();});
+ // Puzzle changes and restarts should return to the unobscured wheel.
+ for(const id of ['puzzle','reset','next']){
+   $(id).addEventListener(id==='puzzle'?'change':'click',closeMobileMenu);
+ }
+ if(mobileMenuQuery.addEventListener)mobileMenuQuery.addEventListener('change',setMobileLayout);
+ else mobileMenuQuery.addListener(setMobileLayout);
+ setMobileLayout();
 function project(x,y,z,cx,cy){let s=perspective/(perspective+z);return{x:cx+x*s,y:cy+y*s,s};}
 function ring(points,alpha){ctx.save();ctx.strokeStyle=`rgba(123,190,232,${alpha})`;ctx.lineWidth=1.3;
  ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();ctx.restore();}
